@@ -7,7 +7,15 @@ export const ForgetPasswordNotification = () => {
     descriptor.value = async function (...args) {
       const queue = this.forgetPasswordEmailQueueService as Queue;
       const result = await originalMethod.apply(this, args);
-      queue.add('send-email', new ForgetPasswordQueuePayloadDTO(args[0].email));
+
+      const resetToken = this.tokenService.generatePasswordResetToken(
+        args[0].email,
+      );
+
+      queue.add(
+        'send-email',
+        new ForgetPasswordQueuePayloadDTO(args[0].email, resetToken),
+      );
       return result;
     };
     return descriptor;

@@ -1,14 +1,28 @@
-import { Body, Controller, Get, Patch, Post, Request } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Patch,
+  Post,
+  Request,
+  Query,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
-  ForgetPasswordDTO,
+  RequestPasswordResetDTO,
+  ResetPasswordDTO,
   LoginDTO,
   RegisterDTO,
   VerifyAccountDTO,
 } from './dtos';
 import { AuthGuard } from 'src/common/decorators/auth-guard.decorator';
 import { AuthRequest } from 'src/common/types';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiQuery,
+} from '@nestjs/swagger';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -31,12 +45,20 @@ export class AuthController {
     return this.authService.register(dto);
   }
 
-  @Patch('forget-password')
+  @Post('request-password-reset')
   @ApiOperation({
-    summary: 'Forget password',
+    summary: 'Request password reset',
   })
-  forgetPassword(@Body() dto: ForgetPasswordDTO) {
-    return this.authService.forgetPassword(dto);
+  requestPasswordReset(@Body() dto: RequestPasswordResetDTO) {
+    return this.authService.requestPasswordReset(dto);
+  }
+
+  @Post('reset-password')
+  @ApiOperation({
+    summary: 'Reset password using token from email link',
+  })
+  resetPassword(@Query('token') token: string, @Body() dto: ResetPasswordDTO) {
+    return this.authService.resetPassword(token, dto);
   }
 
   @Patch('verify-account')

@@ -29,6 +29,17 @@ export class TokenService {
     return randomBytes(10).toString('hex');
   }
 
+  generatePasswordResetToken(email: string): string {
+    const secret = this._getSecretKey();
+    const payload = { email, type: 'password_reset' };
+    return this.jwtService.sign(payload, { expiresIn: '5m', secret });
+  }
+
+  verifyPasswordResetToken(token: string): { email: string; type: string } {
+    const secret = this._getSecretKey();
+    return this.jwtService.verify(token, { secret });
+  }
+
   private _createSession(userId: number, token: string) {
     return this.prismaService.userSession.create({ data: { token, userId } });
   }

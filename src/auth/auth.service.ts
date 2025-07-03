@@ -1,6 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
 import {
-  ForgetPasswordDTO,
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import {
+  RequestPasswordResetDTO,
+  ResetPasswordDTO,
   LoginDTO,
   RegisterDTO,
   GetMeResponseDTO,
@@ -67,12 +72,39 @@ export class AuthService {
   }
 
   @ForgetPasswordNotification()
-  async forgetPassword(dto: ForgetPasswordDTO) {
-    const user = await this.userService.findUserByEmail(dto.email, true);
-    await this.userService.updateUserById(user.id, {
-      password: dto.newPassword,
-    });
-    await this.userService.updateVerificationState(user.id, false);
+  async requestPasswordReset(dto: RequestPasswordResetDTO) {
+    // Verify user exists
+    await this.userService.findUserByEmail(dto.email, true);
+
+    // The reset token is generated and sent via email in the decorator
+    return { message: 'Email reset password đã được gửi.' };
+  }
+
+  async resetPassword(token: string, dto: ResetPasswordDTO) {
+    try {
+      // Verify reset token
+      const payload = this.tokenService.verifyPasswordResetToken(token);
+
+      if (payload.type !== 'password_reset') {
+        throw new UnauthorizedException('Token không hợp lệ.');
+      }
+
+      // Find user and update password
+      const user = await this.userService.findUserByEmail(payload.email, true);
+      await this.userService.updateUserById(user.id, {
+        password: dto.newPassword,
+      });
+
+      return { message: 'Mật khẩu đã được thay đổi thành công.' };
+    } catch (error) {
+      if (
+        error.name === 'JsonWebTokenError' ||
+        error.name === 'TokenExpiredError'
+      ) {
+        throw new UnauthorizedException('Token không hợp lệ hoặc đã hết hạn.');
+      }
+      throw error;
+    }
   }
 
   @VerifyAccountNotification()
