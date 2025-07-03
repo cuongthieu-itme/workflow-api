@@ -1,4 +1,66 @@
-# Swagger API Documentation
+# API Documentation
+
+## Authentication Endpoints
+
+### User Authentication
+
+- `POST /login` - User login
+- `POST /register` - User registration
+- `POST /request-password-reset` - Request password reset link via email
+- `POST /reset-password` - Reset password using token from email
+- `PATCH /verify-account` - Account verification
+- `GET /me` - Get current user information
+
+## Categories
+
+- `GET /categories` - Get all categories
+- `POST /categories` - Create category
+- `PATCH /categories/:id` - Update category
+- `DELETE /categories/:id` - Delete category
+
+## Features
+
+### Authentication
+
+- JWT Token based authentication
+- Role-based access control (USER, ADMIN, SUPER_ADMIN)
+- Email notifications for login activity
+- Secure password reset with time-limited tokens (5 minutes)
+- Account verification system
+
+### Database
+
+- PostgreSQL with Prisma ORM
+- User sessions management
+- Category management
+
+### Background Processing
+
+- Redis-based queue system using BullMQ
+- Email notifications for various user actions
+- Async email processing
+
+### Email Notifications
+
+- Login notifications
+- Registration confirmations
+- Password reset links with tokens
+- Account verification notifications
+
+## Environment Variables Required
+
+```env
+APP_PORT=8080
+DATABASE_URL="postgresql://username:password@localhost:5432/dbname"
+REDIS_HOST=localhost
+REDIS_PORT=6379
+TOKEN_SECRET_KEY=your-secret-key
+FRONTEND_URL=http://localhost:3000
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USER=your-email@gmail.com
+MAIL_PASSWORD=your-email-password
+```
 
 ## Overview
 
@@ -63,7 +125,8 @@ Tất cả responses đều được documented với:
 
 - `POST /login` - User login
 - `POST /register` - User registration
-- `PATCH /forget-password` - Password reset
+- `POST /request-password-reset` - Request password reset link via email
+- `POST /reset-password` - Reset password using token from email
 - `PATCH /verify-account` - Account verification
 - `GET /me` - Get current user info (Protected)
 

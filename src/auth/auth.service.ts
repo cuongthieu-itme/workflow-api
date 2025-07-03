@@ -14,7 +14,7 @@ import {
 import { TokenService } from 'src/common/token/token.service';
 import { UserService } from 'src/user/user.service';
 import {
-  ForgetPasswordNotification,
+  RequestPasswordResetNotification,
   LoginNotification,
   RegisterNotification,
 } from './notification-decorator';
@@ -32,8 +32,8 @@ export class AuthService {
     public readonly loginEmailQueueService: Queue,
     @InjectQueue(QueueKeys.RegisterEmailQueue)
     public readonly registerEmailQueueService: Queue,
-    @InjectQueue(QueueKeys.ForgetPasswordEmailQueue)
-    public readonly forgetPasswordEmailQueueService: Queue,
+    @InjectQueue(QueueKeys.RequestPasswordResetEmailQueue)
+    public readonly requestPasswordResetEmailQueueService: Queue,
     @InjectQueue(QueueKeys.VerifyAccountEmailQueue)
     public readonly verifyAccountEmailQueueService: Queue,
   ) {}
@@ -71,7 +71,7 @@ export class AuthService {
     return { accessToken };
   }
 
-  @ForgetPasswordNotification()
+  @RequestPasswordResetNotification()
   async requestPasswordReset(dto: RequestPasswordResetDTO) {
     // Verify user exists
     await this.userService.findUserByEmail(dto.email, true);

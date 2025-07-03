@@ -10,7 +10,9 @@ import { QueueKeys } from 'src/queue/queue-keys.constant';
     UserModule,
     BullModule.registerQueue({ name: QueueKeys.LoginEmailQueue }),
     BullModule.registerQueue({ name: QueueKeys.RegisterEmailQueue }),
-    BullModule.registerQueue({ name: QueueKeys.ForgetPasswordEmailQueue }),
+    BullModule.registerQueue({
+      name: QueueKeys.RequestPasswordResetEmailQueue,
+    }),
     BullModule.registerQueue({ name: QueueKeys.VerifyAccountEmailQueue }),
   ],
   providers: [AuthService],

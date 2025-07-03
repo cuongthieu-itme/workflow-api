@@ -7,15 +7,15 @@ import { SEND_EMAIL_NOTIFICATION } from 'src/notification/notification-events.co
 import { QueueKeys } from '../queue-keys.constant';
 import { TokenService } from 'src/common/token/token.service';
 
-export class ForgetPasswordQueuePayloadDTO {
+export class RequestPasswordResetQueuePayloadDTO {
   constructor(
     public email: string,
     public resetToken: string,
   ) {}
 }
 
-@Processor(QueueKeys.ForgetPasswordEmailQueue)
-export class ForgetPasswordEmailQueueProcessorService extends WorkerHost {
+@Processor(QueueKeys.RequestPasswordResetEmailQueue)
+export class RequestPasswordResetEmailQueueProcessorService extends WorkerHost {
   constructor(
     private readonly eventEmitter: EventEmitter2,
     private readonly userService: UserService,
@@ -23,7 +23,9 @@ export class ForgetPasswordEmailQueueProcessorService extends WorkerHost {
     super();
   }
 
-  async process({ data }: Job<ForgetPasswordQueuePayloadDTO>): Promise<any> {
+  async process({
+    data,
+  }: Job<RequestPasswordResetQueuePayloadDTO>): Promise<any> {
     const user = await this.userService.findUserByEmail(data.email);
 
     const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${data.resetToken}`;
