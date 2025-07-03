@@ -21,6 +21,14 @@ export class CreateUserDTO {
     example: '',
   })
   @IsNotEmpty()
+  @IsString()
+  @MinLength(3)
+  userName: string;
+
+  @ApiProperty({
+    example: '',
+  })
+  @IsNotEmpty()
   @IsEmail()
   email: string;
 
@@ -34,6 +42,7 @@ export class CreateUserDTO {
 
   @ApiProperty({
     example: '',
+    enum: UserRole,
   })
   @IsNotEmpty()
   @IsEnum(UserRole)

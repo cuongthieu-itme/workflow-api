@@ -25,7 +25,7 @@ export class EmailServiceNotification implements OnModuleInit {
     try {
       await this.emailTransporter.sendMail(this._prepareEmailOption(dto));
     } catch {
-      console.log('Email Not Send, Please Try Again');
+      console.log('Email chưa được gửi, vui lòng thử lại.');
     }
   }
 

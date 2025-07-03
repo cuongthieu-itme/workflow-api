@@ -16,6 +16,7 @@ enum UserRole {
 model User {
   id                Int          @id @default(autoincrement())
   fullName          String
+  userName          String       @unique
   email             String       @unique
   password          String
   isVerifiedAccount Boolean      @default(false)
@@ -28,6 +29,7 @@ model User {
   updatedAt DateTime @updatedAt
 
   @@index([email])
+  @@index([userName])
   @@map("_users")
 }
 

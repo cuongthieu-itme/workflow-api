@@ -3,6 +3,7 @@ import { UserRole } from '@prisma/client';
 export class GetMeResponseDTO {
   id: number;
   fullName: string;
+  userName: string;
   email: string;
   isVerifiedAccount: boolean;
   verifiedDate: Date | null;
@@ -14,6 +15,7 @@ export class GetMeResponseDTO {
   constructor(user: any) {
     this.id = user.id;
     this.fullName = user.fullName;
+    this.userName = user.userName;
     this.email = user.email;
     this.isVerifiedAccount = user.isVerifiedAccount;
     this.verifiedDate = user.verifiedDate;

@@ -9,9 +9,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UpdateBaseUserInfoByIdDTO {
   @ApiPropertyOptional({
-    description: 'Full name of the user',
-    example: 'John Doe Updated',
-    minLength: 4,
+    example: '',
   })
   @IsOptional()
   @IsString()
@@ -19,9 +17,15 @@ export class UpdateBaseUserInfoByIdDTO {
   fullName?: string;
 
   @ApiPropertyOptional({
-    description: 'User password',
-    example: 'newpassword123',
-    minLength: 8,
+    example: '',
+  })
+  @IsOptional()
+  @IsString()
+  @MinLength(3)
+  userName?: string;
+
+  @ApiPropertyOptional({
+    example: '',
   })
   @IsOptional()
   @IsString()
@@ -31,10 +35,7 @@ export class UpdateBaseUserInfoByIdDTO {
 
 export class UpdateUserByIdDTO extends UpdateBaseUserInfoByIdDTO {
   @ApiPropertyOptional({
-    description: 'Last login date',
-    type: 'string',
-    format: 'date-time',
-    example: '2024-01-15T10:00:00Z',
+    example: '',
   })
   @IsOptional()
   @IsDate()

@@ -46,13 +46,13 @@ export class AuthService {
 
   @LoginNotification()
   async login(dto: LoginDTO) {
-    const user = await this.userService.findUserByEmailAndPassword(
-      dto.email,
+    const user = await this.userService.findUserByEmailOrUserNameAndPassword(
+      dto.emailOrUserName,
       dto.password,
     );
     if (!user.isVerifiedAccount) {
       throw new BadRequestException(
-        'Vui lòng xác thực tài khoản qua địa chỉ email trước.',
+        'Vui lòng chờ quản trị viên xác thực tài khoản trước.',
       );
     }
     const accessToken = await this.tokenService.decodeAuthToken({

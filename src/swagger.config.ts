@@ -19,7 +19,7 @@ export function setupSwagger(app: INestApplication): void {
   };
 
   const localIP = getLocalIP();
-  
+
   const config = new DocumentBuilder()
     .setTitle('API')
     .setDescription(
