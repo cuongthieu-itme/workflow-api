@@ -1,4 +1,4 @@
-# 🛒 E-commerce API
+# 🛒 Workflow API
 
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
 [![NestJS](https://img.shields.io/badge/NestJS-10+-red.svg)](https://nestjs.com/)

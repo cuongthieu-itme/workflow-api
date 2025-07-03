@@ -23,8 +23,8 @@ export class RegisterEmailQueueProcessorService extends WorkerHost {
     const user = await this.userService.findUserByEmail(data.email);
     const payload = new SendEmailDTO(
       user.email,
-      'Welcome to our e-commerce application',
-      `E-commerce is a platform to manage your products and sell them as a vendor and also give you a report about your income. For using this platform first you should verify your account. Your verification code is ${user.verifiedToken}`,
+      'Welcome to our workflow application',
+      `Workflow is a platform to manage your products and sell them as a vendor and also give you a report about your income. For using this platform first you should verify your account. Your verification code is ${user.verifiedToken}`,
     );
     this.eventEmitter.emit(SEND_EMAIL_NOTIFICATION, payload);
   }
