@@ -17,12 +17,7 @@ import {
 } from './dtos';
 import { AuthGuard } from 'src/common/decorators/auth-guard.decorator';
 import { AuthRequest } from 'src/common/types';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiBearerAuth,
-  ApiQuery,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -31,7 +26,7 @@ export class AuthController {
 
   @Post('login')
   @ApiOperation({
-    summary: 'Login',
+    summary: 'Đăng nhập',
   })
   login(@Body() dto: LoginDTO) {
     return this.authService.login(dto);
@@ -39,7 +34,7 @@ export class AuthController {
 
   @Post('register')
   @ApiOperation({
-    summary: 'Register',
+    summary: 'Đăng ký',
   })
   register(@Body() dto: RegisterDTO) {
     return this.authService.register(dto);
@@ -47,7 +42,7 @@ export class AuthController {
 
   @Post('request-password-reset')
   @ApiOperation({
-    summary: 'Request password reset',
+    summary: 'Yêu cầu đặt lại mật khẩu',
   })
   requestPasswordReset(@Body() dto: RequestPasswordResetDTO) {
     return this.authService.requestPasswordReset(dto);
@@ -55,7 +50,7 @@ export class AuthController {
 
   @Post('reset-password')
   @ApiOperation({
-    summary: 'Reset password using token from email link',
+    summary: 'Đặt lại mật khẩu',
   })
   resetPassword(@Query('token') token: string, @Body() dto: ResetPasswordDTO) {
     return this.authService.resetPassword(token, dto);
@@ -63,7 +58,7 @@ export class AuthController {
 
   @Patch('verify-account')
   @ApiOperation({
-    summary: 'Verify account',
+    summary: 'Xác thực tài khoản',
   })
   updateVerificationState(@Body() dto: VerifyAccountDTO) {
     return this.authService.updateVerificationState(dto);
@@ -73,7 +68,7 @@ export class AuthController {
   @AuthGuard()
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({
-    summary: 'Get me',
+    summary: 'Lấy thông tin người dùng hiện tại',
   })
   getMe(@Request() req: AuthRequest) {
     return this.authService.getMe(req.user.id);

@@ -3,19 +3,17 @@ import { INestApplication } from '@nestjs/common';
 import * as os from 'os';
 
 export function setupSwagger(app: INestApplication): void {
-  // Get local IP address for network access
   const getLocalIP = () => {
     const networkInterfaces = os.networkInterfaces();
     for (const interfaceName in networkInterfaces) {
       const interfaces = networkInterfaces[interfaceName];
       for (const iface of interfaces) {
-        // Skip internal (localhost) and non-IPv4 addresses
         if (iface.family === 'IPv4' && !iface.internal) {
           return iface.address;
         }
       }
     }
-    return '192.168.1.100'; // fallback IP
+    return '192.168.1.100';
   };
 
   const localIP = getLocalIP();
@@ -24,7 +22,7 @@ export function setupSwagger(app: INestApplication): void {
     .setTitle('API')
     .setDescription(
       `
-      # API Documentation Product Workflow
+      # API Tài liệu Product Workflow
     `,
     )
     .setVersion('1.0.0')
@@ -45,8 +43,6 @@ export function setupSwagger(app: INestApplication): void {
       },
       'JWT-auth',
     )
-    .addTag('Auth', 'Authentication and authorization endpoints')
-    .addTag('Categories', 'Product category management endpoints')
     .addServer('/', 'Current Host (Auto-detect)')
     .addServer('http://localhost:8080', 'Local Development')
     .addServer(`http://${localIP}:8080`, 'Network Access')

@@ -30,6 +30,14 @@ export class UpdateBaseUserInfoByIdDTO {
   @IsOptional()
   @IsString()
   @MinLength(8)
+  phoneNumber?: string;
+
+  @ApiPropertyOptional({
+    example: '',
+  })
+  @IsOptional()
+  @IsString()
+  @MinLength(8)
   password?: string;
 }
 

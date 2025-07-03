@@ -18,6 +18,7 @@ model User {
   fullName          String
   userName          String       @unique
   email             String       @unique
+  phoneNumber       String?      @unique
   password          String
   isVerifiedAccount Boolean      @default(false)
   verifiedDate      DateTime?
@@ -30,6 +31,7 @@ model User {
 
   @@index([email])
   @@index([userName])
+  @@index([phoneNumber])
   @@map("_users")
 }
 

@@ -7,6 +7,7 @@ CREATE TABLE "_users" (
     "fullName" TEXT NOT NULL,
     "userName" TEXT NOT NULL,
     "email" TEXT NOT NULL,
+    "phoneNumber" TEXT,
     "password" TEXT NOT NULL,
     "isVerifiedAccount" BOOLEAN NOT NULL DEFAULT false,
     "verifiedDate" TIMESTAMP(3),
@@ -44,10 +45,16 @@ CREATE UNIQUE INDEX "_users_userName_key" ON "_users"("userName");
 CREATE UNIQUE INDEX "_users_email_key" ON "_users"("email");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "_users_phoneNumber_key" ON "_users"("phoneNumber");
+
+-- CreateIndex
 CREATE INDEX "_users_email_idx" ON "_users"("email");
 
 -- CreateIndex
 CREATE INDEX "_users_userName_idx" ON "_users"("userName");
+
+-- CreateIndex
+CREATE INDEX "_users_phoneNumber_idx" ON "_users"("phoneNumber");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_user_sessions_userId_key" ON "_user_sessions"("userId");

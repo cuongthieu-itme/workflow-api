@@ -6,6 +6,7 @@ import {
 import { CreateUserDTO, UpdateUserByIdDTO } from './dtos';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { HashService } from 'src/common/hash/hash.service';
+import { IPaginationQuery } from 'src/common/types';
 
 @Injectable()
 export class UserService {
@@ -25,16 +26,29 @@ export class UserService {
       throw new ConflictException('Tên đăng nhập đã tồn tại');
     }
 
+    // TODO: Uncomment after running migration
+    // if (dto.phoneNumber) {
+    //   const duplicatedPhoneNumber = await this.findUserByPhoneNumber(dto.phoneNumber);
+    //   if (duplicatedPhoneNumber) {
+    //     throw new ConflictException('Số điện thoại đã tồn tại');
+    //   }
+    // }
+
     const passwordHashed = await this.hashService.encode(dto.password);
-    return this.prismaService.user.create({
+    const user = await this.prismaService.user.create({
       data: {
         email: dto.email,
         userName: dto.userName,
+        // phoneNumber: dto.phoneNumber, // TODO: Uncomment after migration
         password: passwordHashed,
         fullName: dto.fullName,
         role: dto.role,
       },
     });
+
+    // Remove password from response
+    const { password, ...userResponse } = user;
+    return userResponse as any;
   }
 
   async updateVerificationState(id: number, isVerify: boolean) {
@@ -68,7 +82,22 @@ export class UserService {
       }
     }
 
-    return this.prismaService.user.update({ where: { id }, data: dto });
+    // TODO: Uncomment after running migration
+    // if (dto.phoneNumber) {
+    //   const duplicatedPhoneNumber = await this.findUserByPhoneNumber(dto.phoneNumber);
+    //   if (duplicatedPhoneNumber && duplicatedPhoneNumber.id !== id) {
+    //     throw new ConflictException('Số điện thoại đã tồn tại');
+    //   }
+    // }
+
+    const updatedUser = await this.prismaService.user.update({
+      where: { id },
+      data: dto,
+    });
+
+    // Remove password from response
+    const { password, ...userResponse } = updatedUser;
+    return userResponse as any;
   }
 
   async findUserByEmailAndPassword(email: string, password: string) {
@@ -145,5 +174,68 @@ export class UserService {
       );
     }
     return user;
+  }
+
+  // TODO: Uncomment after running migration
+  // async findUserByPhoneNumber(
+  //   phoneNumber: string,
+  //   throwError: boolean = false,
+  // ) {
+  //   const user = await this.prismaService.user.findUnique({
+  //     where: { phoneNumber },
+  //   });
+  //   if (!user && throwError) {
+  //     throw new NotFoundException(
+  //       'Không tìm thấy người dùng với số điện thoại này.',
+  //     );
+  //   }
+  //   return user;
+  // }
+
+  async findAllUsers(paginationQuery: IPaginationQuery) {
+    const { page, limit } = paginationQuery;
+    const skip = page * limit;
+
+    const [users, total] = await this.prismaService.$transaction([
+      this.prismaService.user.findMany({
+        skip,
+        take: limit,
+        select: {
+          id: true,
+          fullName: true,
+          userName: true,
+          email: true,
+          // phoneNumber: true, // TODO: Uncomment after migration
+          isVerifiedAccount: true,
+          verifiedDate: true,
+          role: true,
+          lastLoginDate: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      }),
+      this.prismaService.user.count(),
+    ]);
+
+    return {
+      users: users.map((user) => ({ ...user, phoneNumber: null })), // TODO: Remove after migration
+      total,
+      page,
+      limit,
+    };
+  }
+
+  async deleteUserById(id: number) {
+    const user = await this.findUserById(id);
+    const deletedUser = await this.prismaService.user.delete({
+      where: { id },
+    });
+
+    // Remove password from response and add phoneNumber as null temporarily
+    const { password, ...userResponse } = deletedUser;
+    return { ...userResponse, phoneNumber: null } as any; // TODO: Fix after migration
   }
 }
