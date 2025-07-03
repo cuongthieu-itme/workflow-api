@@ -22,14 +22,12 @@ export class UserService {
       throw new ConflictException('User duplicated email address');
     }
     const passwordHashed = await this.hashService.encode(dto.password);
-    const verificationCode = this.tokenService.generateVerificationToken();
     return this.prismaService.user.create({
       data: {
         email: dto.email,
         password: passwordHashed,
         fullName: dto.fullName,
         role: dto.role,
-        verifiedToken: verificationCode,
       },
     });
   }
@@ -37,20 +35,17 @@ export class UserService {
   async updateVerificationState(
     id: number,
     isVerify: boolean,
-    verifiedToken?: string,
   ) {
     let data: Record<string, any> = {};
     if (isVerify) {
       data = {
         isVerifiedAccount: true,
         verifiedDate: new Date(),
-        verifiedToken: null,
       };
     } else {
       data = {
         isVerifiedAccount: false,
         verifiedDate: null,
-        verifiedToken,
       };
     }
     return this.prismaService.user.update({

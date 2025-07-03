@@ -1,18 +1,18 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class VerifyAccountDTO {
   @ApiProperty({
-    example: '',
+    example: 0,
   })
   @IsNotEmpty()
-  @IsEmail()
-  email: string;
+  @IsNumber()
+  id: number;
 
   @ApiProperty({
-    example: '',
+    example: true,
   })
   @IsNotEmpty()
-  @IsString()
-  verificationCode: string;
+  @IsBoolean()
+  isVerifiedAccount: boolean;
 }

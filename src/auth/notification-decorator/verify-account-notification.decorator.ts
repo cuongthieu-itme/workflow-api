@@ -7,9 +7,11 @@ export const VerifyAccountNotification = () => {
     descriptor.value = async function (...args) {
       const queue = this.verifyAccountEmailQueueService as Queue;
       const result = await originalMethod.apply(this, args);
+      
+      const user = await this.userService.findUserById(args[0].id);
       queue.add(
         'send-email',
-        new VerifyAccountEmailQueuePayloadDTO(args[0].email),
+        new VerifyAccountEmailQueuePayloadDTO(user.email),
       );
       return result;
     };

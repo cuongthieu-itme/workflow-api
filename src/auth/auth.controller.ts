@@ -43,8 +43,8 @@ export class AuthController {
   @ApiOperation({
     summary: 'Verify account',
   })
-  verifyAccount(@Body() dto: VerifyAccountDTO) {
-    return this.authService.verifyAccount(dto);
+  updateVerificationState(@Body() dto: VerifyAccountDTO) {
+    return this.authService.updateVerificationState(dto);
   }
 
   @Get('me')

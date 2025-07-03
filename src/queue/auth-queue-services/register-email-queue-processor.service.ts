@@ -21,11 +21,13 @@ export class RegisterEmailQueueProcessorService extends WorkerHost {
 
   async process({ data }: Job<RegisterEmailQueuePayloadDTO>): Promise<any> {
     const user = await this.userService.findUserByEmail(data.email);
+
     const payload = new SendEmailDTO(
       user.email,
-      'Welcome to our workflow application',
-      `Workflow is a platform to manage your products and sell them as a vendor and also give you a report about your income. For using this platform first you should verify your account. Your verification code is ${user.verifiedToken}`,
+      'Chào mừng bạn đến với hệ thống quản lý công việc',
+      `Xin chào ${user.fullName}! Tài khoản của bạn đã được tạo thành công. Vui lòng chờ quản trị viên phê duyệt để bắt đầu sử dụng nền tảng.`,
     );
+
     this.eventEmitter.emit(SEND_EMAIL_NOTIFICATION, payload);
   }
 }

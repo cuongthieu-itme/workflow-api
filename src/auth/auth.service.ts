@@ -1,14 +1,10 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   ForgetPasswordDTO,
   LoginDTO,
   RegisterDTO,
-  VerifyAccountDTO,
   GetMeResponseDTO,
+  VerifyAccountDTO,
 } from './dtos';
 import { TokenService } from 'src/common/token/token.service';
 import { UserService } from 'src/user/user.service';
@@ -56,7 +52,7 @@ export class AuthService {
     );
     if (!user.isVerifiedAccount) {
       throw new BadRequestException(
-        'First verify your account by email address',
+        'Vui lòng xác thực tài khoản qua địa chỉ email trước.',
       );
     }
     const accessToken = await this.tokenService.decodeAuthToken({
@@ -73,24 +69,18 @@ export class AuthService {
   @ForgetPasswordNotification()
   async forgetPassword(dto: ForgetPasswordDTO) {
     const user = await this.userService.findUserByEmail(dto.email, true);
-    const verifiedToken = this.tokenService.generateVerificationToken();
     await this.userService.updateUserById(user.id, {
       password: dto.newPassword,
     });
-    await this.userService.updateVerificationState(
-      user.id,
-      false,
-      verifiedToken,
-    );
+    await this.userService.updateVerificationState(user.id, false);
   }
 
   @VerifyAccountNotification()
-  async verifyAccount(dto: VerifyAccountDTO) {
-    const user = await this.userService.findUserByEmail(dto.email, true);
-    if (user.verifiedToken !== dto.verificationCode) {
-      throw new NotFoundException('Code not match with any user');
-    }
-    await this.userService.updateVerificationState(user.id, true);
+  async updateVerificationState(dto: VerifyAccountDTO) {
+    await this.userService.updateVerificationState(
+      dto.id,
+      dto.isVerifiedAccount,
+    );
   }
 
   async getMe(userId: number): Promise<GetMeResponseDTO> {

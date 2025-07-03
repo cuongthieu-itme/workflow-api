@@ -21,11 +21,13 @@ export class LoginEmailQueueProcessorService extends WorkerHost {
 
   async process({ data }: Job<LoginEmailQueuePayloadDTO>): Promise<any> {
     const user = await this.userService.findUserByEmail(data.email);
+
     const sendEmailPayload = new SendEmailDTO(
       user.email,
-      `Someone logged into your account`,
-      `${user.fullName} someone entered your account at ${user.lastLoginDate}`,
+      'Phát hiện đăng nhập vào tài khoản của bạn',
+      `${user.fullName}, đã có người đăng nhập vào tài khoản của bạn lúc ${user.lastLoginDate}. Nếu không phải bạn, vui lòng đổi mật khẩu ngay.`,
     );
+
     this.eventEmitter.emit(SEND_EMAIL_NOTIFICATION, sendEmailPayload);
   }
 }

@@ -23,11 +23,13 @@ export class VerifyAccountEmailQueueProcessorService extends WorkerHost {
     data,
   }: Job<VerifyAccountEmailQueuePayloadDTO>): Promise<any> {
     const user = await this.userService.findUserByEmail(data.email);
+
     const payload = new SendEmailDTO(
       user.email,
-      'Verified your account successfully',
-      `${user.fullName} your account verified at ${user.verifiedDate} successfully`,
+      'Xác thực tài khoản thành công',
+      `${user.fullName}, tài khoản của bạn đã được xác thực thành công vào lúc ${user.verifiedDate}.`,
     );
+
     this.eventEmitter.emit(SEND_EMAIL_NOTIFICATION, payload);
   }
 }

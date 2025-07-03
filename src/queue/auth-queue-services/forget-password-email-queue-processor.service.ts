@@ -21,11 +21,13 @@ export class ForgetPasswordEmailQueueProcessorService extends WorkerHost {
 
   async process({ data }: Job<ForgetPasswordQueuePayloadDTO>): Promise<any> {
     const user = await this.userService.findUserByEmail(data.email);
+
     const sendEmailPayload = new SendEmailDTO(
       user.email,
-      `Forget password process`,
-      `After changing password you should verify your account. Your verification code is : ${user.verifiedToken}`,
+      'Thay đổi mật khẩu thành công',
+      `Mật khẩu của bạn đã được thay đổi thành công. Nếu cần xác minh tài khoản, vui lòng liên hệ quản trị viên.`,
     );
+
     this.eventEmitter.emit(SEND_EMAIL_NOTIFICATION, sendEmailPayload);
   }
 }

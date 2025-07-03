@@ -9,7 +9,6 @@ CREATE TABLE "_users" (
     "password" TEXT NOT NULL,
     "isVerifiedAccount" BOOLEAN NOT NULL DEFAULT false,
     "verifiedDate" TIMESTAMP(3),
-    "verifiedToken" TEXT,
     "role" "UserRole" NOT NULL,
     "lastLoginDate" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

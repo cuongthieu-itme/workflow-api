@@ -20,7 +20,6 @@ model User {
   password          String
   isVerifiedAccount Boolean      @default(false)
   verifiedDate      DateTime?
-  verifiedToken     String?
   role              UserRole
   lastLoginDate     DateTime?
   sessions          UserSession? @relation("user_session_relation")
