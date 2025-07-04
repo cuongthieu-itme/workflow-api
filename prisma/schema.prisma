@@ -43,14 +43,3 @@ model UserSession {
   @@id([userId, token])
   @@map("_user_sessions")
 }
-
-model Category {
-  id          Int     @id @default(autoincrement())
-  name        String
-  description String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("_categories")
-}

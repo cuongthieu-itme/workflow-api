@@ -27,17 +27,6 @@ CREATE TABLE "_user_sessions" (
     CONSTRAINT "_user_sessions_pkey" PRIMARY KEY ("userId","token")
 );
 
--- CreateTable
-CREATE TABLE "_categories" (
-    "id" SERIAL NOT NULL,
-    "name" TEXT NOT NULL,
-    "description" TEXT,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "_categories_pkey" PRIMARY KEY ("id")
-);
-
 -- CreateIndex
 CREATE UNIQUE INDEX "_users_userName_key" ON "_users"("userName");
 
