@@ -40,83 +40,86 @@ export class AuthService {
 
   @RegisterNotification()
   async register(dto: RegisterDTO) {
-    const user = await this.userService.createUser(dto);
+    const user = await this.userService.create(dto);
+
     const accessToken = await this.tokenService.decodeAuthToken({
       userId: user.id,
       isVerifiedAccount: user.isVerifiedAccount,
       role: user.role,
     });
+
     return { accessToken };
   }
 
   @LoginNotification()
   async login(dto: LoginDTO) {
-    const user = await this.userService.findUserByEmailOrUserNameAndPassword(
+    const user = await this.userService.loginOptimized(
       dto.emailOrUserName,
       dto.password,
     );
+
     if (!user.isVerifiedAccount) {
       throw new BadRequestException(
         'Vui lòng chờ quản trị viên xác thực tài khoản trước.',
       );
     }
-    const accessToken = await this.tokenService.decodeAuthToken({
-      isVerifiedAccount: user.isVerifiedAccount,
-      role: user.role,
-      userId: user.id,
-    });
-    await this.userService.updateUserById(user.id, {
-      lastLoginDate: new Date(),
-    });
+
+    const [accessToken] = await Promise.all([
+      this.tokenService.decodeAuthToken({
+        isVerifiedAccount: user.isVerifiedAccount,
+        role: user.role,
+        userId: user.id,
+      }),
+      this.userService.updateLoginDate(user.id),
+    ]);
+
     return { accessToken };
+  }
+
+  async getMe(userId: number): Promise<GetMeResponseDTO> {
+    const user = await this.userService.findByIdOptimized(userId);
+    return new GetMeResponseDTO(user);
   }
 
   @RequestPasswordResetNotification()
   async requestPasswordReset(dto: RequestPasswordResetDTO) {
-    // Verify user exists
-    await this.userService.findUserByEmail(dto.email, true);
-
-    // The reset token is generated and sent via email in the decorator
+    await this.userService.verifyEmailExists(dto.email);
     return { message: 'Email reset password đã được gửi.' };
+  }
+
+  @VerifyAccountNotification()
+  async updateVerificationState(dto: VerifyAccountDTO) {
+    await this.userService.updateVerification(dto.id, dto.isVerifiedAccount);
   }
 
   async resetPassword(token: string, dto: ResetPasswordDTO) {
     try {
-      // Verify reset token
       const payload = this.tokenService.verifyPasswordResetToken(token);
 
       if (payload.type !== 'password_reset') {
         throw new UnauthorizedException('Token không hợp lệ.');
       }
 
-      // Find user and update password
-      const user = await this.userService.findUserByEmail(payload.email, true);
-      await this.userService.updateUserById(user.id, {
-        password: dto.newPassword,
-      });
+      await this.userService.resetPassword(payload.email, dto.newPassword);
 
       return { message: 'Mật khẩu đã được thay đổi thành công.' };
     } catch (error) {
-      if (
-        error.name === 'JsonWebTokenError' ||
-        error.name === 'TokenExpiredError'
-      ) {
-        throw new UnauthorizedException('Token không hợp lệ hoặc đã hết hạn.');
+      if (error.name === 'TokenExpiredError') {
+        throw new UnauthorizedException(
+          'Token đặt lại mật khẩu đã hết hạn. Vui lòng yêu cầu đặt lại mật khẩu mới.',
+        );
       }
-      throw error;
+      if (error.name === 'JsonWebTokenError') {
+        throw new UnauthorizedException(
+          'Token đặt lại mật khẩu không hợp lệ. Vui lòng kiểm tra lại link trong email.',
+        );
+      }
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+      throw new UnauthorizedException(
+        'Có lỗi xảy ra khi xác thực token. Vui lòng thử lại.',
+      );
     }
-  }
-
-  @VerifyAccountNotification()
-  async updateVerificationState(dto: VerifyAccountDTO) {
-    await this.userService.updateVerificationState(
-      dto.id,
-      dto.isVerifiedAccount,
-    );
-  }
-
-  async getMe(userId: number): Promise<GetMeResponseDTO> {
-    const user = await this.userService.findUserById(userId);
-    return new GetMeResponseDTO(user);
   }
 }

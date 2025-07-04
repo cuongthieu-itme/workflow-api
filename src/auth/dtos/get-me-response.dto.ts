@@ -5,6 +5,7 @@ export class GetMeResponseDTO {
   fullName: string;
   userName: string;
   email: string;
+  phoneNumber: string;
   isVerifiedAccount: boolean;
   verifiedDate: Date | null;
   role: UserRole;
@@ -17,6 +18,7 @@ export class GetMeResponseDTO {
     this.fullName = user.fullName;
     this.userName = user.userName;
     this.email = user.email;
+    this.phoneNumber = user.phoneNumber;
     this.isVerifiedAccount = user.isVerifiedAccount;
     this.verifiedDate = user.verifiedDate;
     this.role = user.role;

@@ -79,26 +79,4 @@ export class UserController {
   ): Promise<GetUserResponseDTO> {
     return this.userService.deleteUserById(id);
   }
-
-  @Get('username/:username')
-  @AuthGuard()
-  @ApiOperation({ summary: 'Lấy thông tin người dùng theo tên đăng nhập' })
-  async findUserByUsername(
-    @Param('username') username: string,
-  ): Promise<GetUserResponseDTO> {
-    const user = await this.userService.findUserByUserName(username, true);
-    const { password, ...userResponse } = user;
-    return userResponse as GetUserResponseDTO;
-  }
-
-  @Get('email/:email')
-  @AuthGuard()
-  @ApiOperation({ summary: 'Lấy thông tin người dùng theo email' })
-  async findUserByEmail(
-    @Param('email') email: string,
-  ): Promise<GetUserResponseDTO> {
-    const user = await this.userService.findUserByEmail(email, true);
-    const { password, ...userResponse } = user;
-    return userResponse as GetUserResponseDTO;
-  }
 }
