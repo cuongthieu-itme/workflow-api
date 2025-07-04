@@ -4,20 +4,20 @@ import {
   Get,
   Patch,
   Post,
-  Request,
   Query,
+  Request,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import {
-  RequestPasswordResetDTO,
-  ResetPasswordDTO,
-  LoginDTO,
-  RegisterDTO,
-  VerifyAccountDTO,
-} from './dtos';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/common/decorators/auth-guard.decorator';
 import { AuthRequest } from 'src/common/types';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { AuthService } from './auth.service';
+import {
+  LoginDTO,
+  RegisterDTO,
+  RequestPasswordResetDTO,
+  ResetPasswordDTO,
+  VerifyAccountDTO,
+} from './dtos';
 
 @ApiTags('Auth')
 @Controller('auth')

@@ -15,14 +15,20 @@ export class TokenService {
 
   async decodeAuthToken(dto: DecodeAuthTokenDTO) {
     const secret = this._getSecretKey();
-    const token = this.jwtService.sign(dto, { expiresIn: '24h', secret });
+    const token = this.jwtService.sign(dto, { expiresIn: '30d', secret });
     await this._resetSessionsByUserId(dto.userId);
     await this._createSession(dto.userId, token);
     return token;
   }
 
-  verifyToken(token: string): DecodeAuthTokenDTO {
-    return this.jwtService.verify(token, { secret: this._getSecretKey() });
+  verifyToken(token: string): DecodeAuthTokenDTO | null {
+    try {
+      return this.jwtService.verify(token, { secret: this._getSecretKey() });
+    } catch (error) {
+      // Handle JWT errors gracefully by returning null
+      // This allows the guard to throw appropriate UnauthorizedException
+      return null;
+    }
   }
 
   generateVerificationToken() {
